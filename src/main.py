@@ -34,9 +34,12 @@ def contagemRegressiva(t):
     while t:
         mins, secs = divmod(t, 60)
         tempoFormatado = '{:02d}:{:02d}'.format(mins, secs)
-        print(tempoFormatado, end='\r')
+        print(tempoFormatado)
+        sys.stdout.write("\033[F")
         time.sleep(1)
         t -= 1
+
+    print("00:00")
 
 if __name__ == "__main__":
     while True:
