@@ -9,46 +9,43 @@ from sh import git
 import time
 import os, sys
 
-aggregated = ""
+tempoDeChecagem = 60
+diretorioGit = "/SEU/DIRETORIO/"
 
-def CheckForUpdate(workingDir):
-    print("Fetching most recent code from source..." + workingDir)
+def checandpAtualizacoes(diretorio):
+    print("Comparando versão local com a remota em: " + diretorio)
 
-    # Fetch most up to date version of code.
-    p = git("--git-dir=" + workingDir + ".git/", "--work-tree=" + workingDir, "fetch", "origin", "master", _out=ProcessFetch, _out_bufsize=0, _tty_in=True)               
+    # Pegando a versão mais recente
+    git("--git-dir=" + diretorio + ".git/", "--work-tree=" + diretorio, "fetch", "origin", "master", _out_bufsize=0, _tty_in=True)               
     
-    print("Fetch complete.")
-    time.sleep(2)
-    print("Checking status for " + workingDir + "...")
-    statusCheck = git("--git-dir=" + workingDir + ".git/", "--work-tree=" + workingDir, "status")
+    time.sleep(1)   
+    print("Checando o status do diretório...")
+    statusCheck = git("--git-dir=" + diretorio + ".git/", "--work-tree=" + diretorio, "status")
 
+    # Resposta do git ao realizar um fetch
     if "Your branch is up-to-date" in statusCheck:
-        print("Status check passes.")
-        print("Code up to date.")
+        print("Diretório atualizado.")
         return False
     else:
-        print("Code update available.")
+        print("Atualizações disponíveis")
         return True
 
-def ProcessFetch(char, stdin):
-    global aggregated
-
-    sys.stdout.flush()
-    aggregated += char
-    if aggregated.endswith("Password for 'https://henriquezanfa@github.com':"):
-        print(mainLogger, "Entering password...", True)
-        stdin.put("yourpassword\n")
+def contagemRegressiva(t):
+    while t:
+        mins, secs = divmod(t, 60)
+        tempoFormatado = '{:02d}:{:02d}'.format(mins, secs)
+        print(tempoFormatado, end='\r')
+        time.sleep(1)
+        t -= 1
 
 if __name__ == "__main__":
-    checkTimeSec = 60
-    gitDir = "/var/testupdate/"
     while True:
-        print("*********** Checking for code update **************")                                                     
+        print("\n************************ Checando se há atualizações ************************")                                                     
     
-        if CheckForUpdate(gitDir):
-            print("Resetting code...")
-            resetCheck = git("--git-dir=" + gitDir + ".git/", "--work-tree=" + gitDir, "reset", "--hard", "origin/master")
+        if checandpAtualizacoes(diretorioGit):
+            print("Atualizando código...")
+            resetCheck = git("--git-dir=" + diretorioGit + ".git/", "--work-tree=" + diretorioGit, "reset", "--hard", "origin/master")
             print(str(resetCheck)) 
                                                                                                                                                                 
-        print("Check complete. Waiting for " + str(checkTimeSec) + "seconds until next check...", True)
-        time.sleep(checkTimeSec)
+        print("Checagem completa! \nAguardando " + str(tempoDeChecagem) + " segundos para a próxima atualização")
+        contagemRegressiva(tempoDeChecagem)
