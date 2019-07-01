@@ -32,7 +32,7 @@ def ProcessFetch(char, stdin):
 
     sys.stdout.flush()
     aggregated += char
-    if aggregated.endswith("Password for 'https://henriquezanfa@github':"):
+    if aggregated.endswith("Password for 'https://henriquezanfa@github.com':"):
         print(mainLogger, "Entering password...", True)
         stdin.put("yourpassword\n")
 
