@@ -1,4 +1,4 @@
-# Rasp-Auto-Update
+# Raspberry Auto Update
 
 O objetivo desse repo é gerar um código para utilização em Raspberry's (acredito que funcione em todos os OS, mas só testei com Raspberry) que verifique updates na branch master do git e faça o pull das atualizações, quando houverem.
 
